@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% load product_extras %}
+{% load order_extras %}
+{% load static %}
+{% block head_js %}
+	<script src="{% static 'js/main.js' %}"></script> 
+	<script src="https://scripts.sirv.com/sirv.js"></script>
+{% endblock head_js %}
+{% block head_style %}
+	<style>
+		
+	</style>
+{% endblock head_style %}
+
+{% block content %}
+
+	
+
+	<!-- Styles Section -->
+	  <div class="w3-padding-32 w3-section w3-content w3-justify w3-text-grey" style="max-width:1200px">
+	    
+	    <!-- Grid for photos -->
+	    <div class="w3-row-padding" style="margin:0 -16px">
+	      
+	      {% for product in active_products %}	
+	      	{% get_total_product_items_available product.id as stock_level %}
+	      	
+	      <div class="w3-half">
+	        
+				<div class="w3-display-container w3-text-black">
+
+					<div class="w3-display-container">
+						
+			            {% if product.product_image_sirv_1 %}
+			            
+			            	<div class="Sirv" data-effect="zoom">
+			            		<img data-src="{{ product.product_image_sirv_1 }}?canvas.height=1800" style="width:100%" title="{{ product.product_image_sirv_5_desc }}"/ >
+			            	</div>
+			            
+			            
+			            {% else %}
+			            	<img src="{% get_media_prefix %}{{ product.product_image_5 }}" style="width:100%" title="{{ product.product_image_5_desc }}">
+
+	         			{% endif %}
+         			</div>
+
+         			<div class="w3-display-container">
+
+         				<div class="w3-left w3-margin-bottom"> 
+			                <div class="w3-text-white w3-margin-left" style="font-family:'ChristopherHand';font-size:36px">
+			                <a href="{% url 'show_product' product_id=product.id %}" style="text-decoration: none;">
+			                	
+			                	{{ product.product_display_name }}
+			                	<img src="{% static 'images/base/shady_dog_logo.jpg' %}" alt="logo" class="w3-image w3-circle" width="30px">
+
+			                </a>
+
+			                	{% if user.is_superuser %}
+			                		<div class="w3-tiny w3-text-orange" style="font-family:'Montserrat';">Remaining Stock: {{ stock_level }}</div>
+			                	{% endif %}
+			                </div>
+			            </div>
+
+			         		                
+		                <div class="w3-right w3-margin-bottom">
+		                	{% if stock_level > 0 %}
+		                		<a onclick="addItemToCart({{ product.id }},'{{ product.product_display_name }}',1);" style="margin-top:10px" class="w3-btn w3-black w3-round w3-medium w3-border w3-border-white w3-hover-orange"><i class="fa fa-cart-plus fa-lg" aria-hidden="true"></i></a>
+		                	{% else %}
+		                		<a href="javascript:void(0)" style="margin-top:10px" class="w3-btn w3-black w3-round w3-medium w3-border w3-border-white w3-hover-orange w3-disabled"><i class="fa fa-cart-plus fa-lg" aria-hidden="true"></i></a>
+		                	{% endif %}
+		                	
+		                  <a id="{{ product.id }}" href="{% url 'show_product' product_id=product.id %}" style="margin-top:10px" class="w3-btn w3-black w3-round w3-medium w3-border w3-border-white w3-hover-orange"><i class="fa fa-bars fa-lg" aria-hidden="true"></i></a>
+		              	</div>
+		                
+
+		               
+	                </div>
+			       	
+		      	</div>
+	        
+	      </div>
+
+
+	      
+	    <!-- End photo grid -->
+	    {% endfor %}
+
+	    </div>
+	  <!-- End Styles Section -->
+	  </div>
+
+
+{% endblock content %}
+
+ {% block portfolio %}
+{% endblock portfolio %}
+{% block about %}
+{% endblock about %}
+
+{% block contact %}
+{% endblock contact %}
+
+
+
+{% block footer_js %}
+<script>
+window.onload = function(){
+
+		
+	shopHome = document.querySelectorAll(".shop_home");
+
+    var i;
+    for(i=0; i < shopHome.length; i++){
+    	
+    	shopHome[i].classList.add("w3-border");
+    	shopHome[i].classList.add("w3-border-orange");
+    	
+    }
+		
+		
+
+}
+</script>
+
+{% endblock footer_js %}

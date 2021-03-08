@@ -1,0 +1,175 @@
+ <div id="pop_up_address" class="w3-modal">
+	    <div class="w3-modal-content" style="width:400px;">
+	      <div class="w3-container w3-text-black"> 
+	      	
+		      	<span onclick="document.getElementById('pop_up_address').style.display='none';" style="margin-right:5px;margin-top:5px" class="w3-display-topright w3-padding w3-btn w3-border w3-black w3-border-white w3-hover-white w3-round w3-small">
+		      		<i class="fa fa-times w3-large" aria-hidden="true"></i>
+		      	</span>
+
+		       <form role="form" method="post" id="shipping_address_form" class="w3-container" >
+		       	{% csrf_token %}
+					<div class="w3-display-container w3-text-black w3-padding-16">
+		
+						<h1 style="font-family: 'ChristopherHand';font-size:36px!important;">Shipping Address</h1>
+						<p>
+					  	<label>Name/Recipient</label>{{ shipping_address_form.shipping_name }}
+						</p>
+						<p>
+					  	<labe>Address Line 1</label>{{ shipping_address_form.shipping_address_line1 }}
+						</p>
+						<p>
+					  	<label>Address Line 2</label>{{ shipping_address_form.shipping_address_line2 }}
+					 	</p>
+					 	<p>
+					  	<label>Town/City</label>{{ shipping_address_form.shipping_address_city }}
+						</p>
+						<p>
+						<label>County/State</label>{{ shipping_address_form.shipping_address_state }}
+						</p>
+						<p>
+					  	<label>Postal Code</label>{{ shipping_address_form.shipping_address_postal_code }}
+						</p>
+						<p>
+					  	<label>Country</label>
+					  		{{ value|truncatechars_html:7 }} {{ shipping_address_form.shipping_address_country }}
+						</p>
+
+					</div>
+				
+		       <div id="message_footer" style="margin-left:0px;margin-bottom:10px">
+		       		
+		       		<span onclick="format_shipping_address_data();" class="w3-btn w3-border w3-black w3-border-white w3-hover-white w3-round w3-small" style="margin-top:5px">Submit</span>
+
+		       		<span onclick="document.getElementById('pop_up_address').style.display='none';" class="w3-btn w3-border w3-black w3-border-white w3-hover-white w3-round w3-small" style="margin-top:5px">Cancel</span>
+			     
+			   </div>
+
+			   </form>
+	      </div>
+	    </div>
+ 
+</div>
+
+<script>
+
+	inputList = document.querySelectorAll("input[type='text']");
+	selectList= document.querySelectorAll("select");
+	
+        var i;
+        for(i=0; i < inputList.length; i++){
+        	
+        	inputList[i].classList.add("w3-input");
+        	inputList[i].classList.add("w3-border"); 
+        	inputList[i].classList.add("w3-padding");  
+        	inputList[i].classList.add("w3-hover-orange");
+        	inputList[i].classList.add("w3-round");
+        	inputList[i].classList.add("w3-text-orange");
+        }
+
+        var i;
+        for(i=0; i < selectList.length; i++){
+        	
+        	selectList[i].classList.add("w3-select");  
+        	selectList[i].classList.add("w3-border"); 
+        	selectList[i].classList.add("w3-padding"); 
+        	selectList[i].classList.add("w3-hover-white");
+        	selectList[i].classList.add("w3-round");
+        	selectList[i].classList.add("w3-text-orange");
+        }
+        
+
+  
+    function format_shipping_address_data(){
+    	
+    	var form_elements = document.getElementById('shipping_address_form').elements;
+    	var obj = {};
+    	var postage_obj = {};
+    	
+    	for (var i=0; i < form_elements.length; i++){
+
+    		var item = form_elements.item(i);	
+    		obj[item.name] = item.value;
+    
+    	}
+    	
+    	
+    	//postage display elements to be updated after address is updated
+    	var postage_elements = document.getElementById('postage_type_form').elements;
+    	
+    	for (var i=0; i < postage_elements.length; i++){
+
+    		var item = postage_elements.item(i);
+    		
+    		postage_obj[item.value] = item.value;
+
+    	}
+   
+    	updateShippingAddress(obj,postage_obj);
+    }
+
+    function update_postage_display_data(postage_display_data){
+
+    	postage_obj = postage_display_data;
+    	
+    	for (item in postage_obj){
+    		
+    		document.getElementById("postage_" + item).innerHTML = postage_obj[item];
+
+    	}
+
+    }
+
+    function update_shipping_address_data(new_form_data,old_form_data, postage_display_data){
+
+    	var new_obj = JSON.parse(new_form_data)
+    	var old_obj = JSON.parse(old_form_data)
+    	
+    	var changed = false;
+
+    	for (item in new_obj){
+    		
+			document.getElementById("id_" + item).value = new_obj[item];
+			    			
+			if (item == "shipping_address_country"){
+				if(new_obj[item]){
+
+					updateCountryName(new_obj[item],"id_" + item + "_ro");
+					create_country_flag(new_obj[item]);
+					document.getElementById("enter_shipping_country").style.display="none";
+
+				}else{
+
+					document.getElementById("id_" + item + "_ro").innerHTML =new_obj[item];
+					remove_country_flag();
+					document.getElementById("enter_shipping_country").style.display="block";
+					document.getElementById("enter_shipping_country").innerHTML = "Enter your shipping country to view rates"
+				}
+			}else{
+				if(new_obj[item]){
+					document.getElementById("id_" + item + "_ro").innerHTML =new_obj[item] + "<br>";
+				}else{
+					document.getElementById("id_" + item + "_ro").innerHTML =new_obj[item];
+				}
+				
+			}
+
+			if(changed == false){
+				
+				if(new_obj[item] != old_obj[item]){
+					changed = true;
+				}
+			}
+    	} 
+
+    	if (changed == true){
+    		
+    		populate_pop_up_message("Your ", "Shipping Address and Shipping Costs ", " have been updated", false);
+
+    	}else{
+    		
+    		populate_pop_up_message("No updates were made to your ", "Shipping Address ", "", false);
+    	}  	
+
+    }
+
+</script>

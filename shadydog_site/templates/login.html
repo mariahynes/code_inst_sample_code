@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+    {% block content %}
+    {% load static %}
+        {% block head_style %}
+            <style>
+
+                input[type="text"] {
+                    width: 100%;
+                    padding: 12px 20px;
+                    margin: 2px 0;
+                    box-sizing: border-box;
+                    border-radius: 10px;
+                    border: none;
+               }
+               input[type="password"] {
+                    width: 100%;
+                    padding: 12px 20px;
+                    margin: 1px 0;
+                    box-sizing: border-box;
+                    border-radius: 10px;
+                    border: none;
+               }
+               input[type="email"] {
+                    width: 100%;
+                    padding: 12px 20px;
+                    margin: 1px 0;
+                    box-sizing: border-box;
+                    border-radius: 10px;
+                    border: none;
+               }
+
+                input[type="checkbox"] {
+                
+                    width: 28px;
+                    height: 28px;
+                    margin: 0 8px 1px 0;
+                    font-size: 7px;
+                    line-height: .8;
+                }
+
+                .checkbox-style-CMI{
+                    display: inline-block;
+                    vertical-align: middle;
+                    margin-bottom: 20px;
+
+                }
+               
+                a{
+                    color:#ffffff;
+                }
+                .sm_font{
+                    font-size: 0.8em;
+                }
+                
+
+
+            </style>
+        {% endblock head_style %}
+
+    <div class="w3-padding-16 w3-section w3-content w3-justify w3-text-grey">
+        
+            <div class="w3-container" >
+
+                <div class="w3-container w3-text-black">
+
+                    {% if errors %}
+                      
+                            {% for error in errors %}
+                            <div >
+                                <div class="w3-text-orange"><i class="icon-info-sign"></i>{{ error }}</div>
+                            </div>
+                            {% endfor %}
+                        
+                    {% endif %}
+                   
+                        <form role="form"  method="post">
+                                        
+                            {% csrf_token %}
+                                            
+                             <label for="id_email" class="w3-text-white ">Email</label>
+                               <div > {{ form.email }} </div>
+                                <br>
+                                <label for="id_password" class="w3-text-white ">Password</label>
+                               <div > {{ form.password }}</div>
+                               <p>                 
+                            <div >
+                                <button type="submit" class="w3-left w3-margin-bottom w3-btn w3-border w3-black w3-border-white w3-hover-orange w3-round w3-medium" style="font-family: 'Montserrat';margin-bottom:10px;">LOG IN</button>
+                          
+                            <a href={% url 'admin_password_reset' %} class="w3-right w3-margin-bottom w3-btn w3-border w3-black w3-border-white w3-hover-orange w3-round w3-medium" style="font-family: 'Montserrat';margin-bottom:10px;" >Forgot password?</a>
+                          
+                          </div>
+                            </p>
+                            <input type="hidden" name="next" value="{{ next }}" />
+
+                        </form>
+                </div>
+
+            </div> 
+            
+                    
+                        
+    </div>
+
+
+    {% endblock %}

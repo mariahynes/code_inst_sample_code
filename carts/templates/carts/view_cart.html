@@ -1,0 +1,196 @@
+{% extends 'base.html' %}
+{% load global_extras %}
+{% load product_extras %}
+{% load order_extras %}
+{% load cart_extras %}
+{% load shipping_extras %}
+{% load static %}
+{% block title %}
+	View Cart
+{% endblock title %}
+{% block head_js %}
+	<script src="https://js.stripe.com/v3/"></script> 
+	<script src="{% static 'js/main.js' %}"></script> 
+	<script src="https://scripts.sirv.com/sirv.js"></script>
+	<script>
+
+		var perfEntries = performance.getEntriesByType("navigation");
+		for (var i=0; i < perfEntries.length; i++) {
+			var p = perfEntries[i];
+			if(p.type=="back_forward"){
+				console.log(p.type);
+				location.reload(true);
+			}
+		}
+				
+		if(performance.navigation.type == 2){
+	   		console.log("old way");
+	   		location.reload(true);
+		}
+		
+	</script>
+{% endblock head_js %}
+{% block head_style %}	
+{% endblock head_style %}
+
+{% block content %}
+
+	<div class="w3-padding-32 w3-section w3-content w3-justify w3-text-grey">
+	  
+	    <div class="w3-row-padding w3-content w3-justify" style="margin:0 -16px;">
+
+	      	<header class="w3-container w3-black">
+		      <h1 style="font-family: 'ChristopherHand';font-size:48px!important;margin-left:10px; ">
+		      	{% if cart_id %}
+
+		      		Your Cart {% if count_cart_items == 0 %} is empty {% endif %}
+		      	
+		      	{% else %}
+
+		      		Your Cart is empty
+
+		      	{% endif %}
+		      	<span id="empty_cart"></span>
+		      </h1>
+		    </header>
+
+	    	{% if cart_id %}
+	    		{% calculate_cart_subtotal_in_cart request as initial_subtotal %}
+	    	{% endif %}
+
+	    	{% get_max_items_allowed_in_cart as cart_max %}
+	    			    
+	    	<div id="cart_body" class="w3-container"><!-- cart body start -->
+	    		
+		    	{% for product in the_cart %}	
+		    	
+		      	{% get_total_product_items_available product.product_id as stock_level %}
+		      	{% get_max_per_purchase product.product_id as max_allowed %}
+		      	{% get_product_image_url product.product_id as product_image %}
+		      	{% get_product_price product.product_id as product_price %}
+		      	{% calculate_product_subtotal_in_cart request product.product_id as initial_price %}
+
+		        <div id='{{ product.product_id }}' class="w3-container">
+					<div class="w3-display-container w3-text-black w3-padding-16">
+						<div class="w3-quarter">
+				            {% if product_image %}
+				            
+				            		<img src="{{ product_image }}" style="width:100%" title="{{ product.product_name }} {% return_site_name %}"/ >
+				            				        
+		         			{% endif %}
+	         			</div>
+	         			<div class="w3-threequarter">
+	         				
+								<ul class="w3-ul w3-border  w3-black">
+								  <li class="w3-theme">
+								  	<span style="font-family: 'ChristopherHand';font-size:24px">
+								  		<a href="{% url 'show_product' product_id=product.product_id %}">{{ product.product_name }}</a>
+								  	</span>
+								  </li>
+								  <li>
+								  	<button onclick="decrease_quantity({{ product.product_id }},'{{ product.product_name }}')" class="w3-btn w3-border w3-border-orange w3-hover-white w3-tiny w3-round"><i class="fa fa-minus" aria-hidden="true"></i></button>
+						      		<button id="quantity_selected_{{ product.product_id }}" class="w3-btn w3-small w3-round" style="width:40px">{{ product.quantity }}</button>
+						      		<button onclick="increase_quantity({{ product.product_id }},'{{ product.product_name }}')" class="w3-btn w3-round w3-tiny w3-border w3-border-orange w3-hover-white"><i class="fa fa-plus" aria-hidden="true"></i></button>
+						      		<span class="w3-small">&nbsp;&nbsp;&euro;{{ product_price }} each</span>
+						      	</li>
+								  <li><span class="w3-small">Sub-Total &nbsp; &euro;</span><span class="w3-right" id="sub_total_{{ product.product_id }}">{{ initial_price }}</span>
+								  </li>
+
+								</ul>
+								<div onclick="confirm_remove({{ product.product_id }},'{{ product.product_name }}')" class="w3-right w3-btn w3-border w3-black w3-border-white w3-hover-white w3-round w3-tiny" style="margin-top:5px">Remove</div> 
+								
+						</div>
+
+					</div>
+				</div>
+		 		{% endfor %}
+		 		
+		 		{% if cart_id %}
+			 		<div class="w3-container">
+						<div class="w3-display-container w3-text-black w3-padding-16">
+							
+								<ul class="w3-ul w3-border w3-black">
+								  <li class="w3-theme">
+								  	Cart Total &nbsp; &euro;<span class="w3-right cart_subtotal" style="font-weight: bold">{{ initial_subtotal }}</span>
+								  </li>
+								</ul>
+							{% if count_cart_items > 0 %}
+							<br>
+							<span class="w3-hide-small">
+									<a href="{% url 'index' %}" class="w3-left w3-btn w3-border w3-black w3-border-white w3-hover-orange w3-round w3-medium" style="margin-top:10px">Continue Shopping</a> 	
+									<a href="{% url 'checkout_cart' %}" class="w3-right w3-btn w3-border w3-black w3-border-white w3-hover-orange w3-round w3-medium" style="margin-top:10px">Proceed to Checkout</a> 
+							</span>
+							<span class="w3-hide-medium w3-hide-large">
+									<a href="{% url 'index' %}" class="w3-btn w3-border w3-black w3-border-white w3-hover-orange w3-round w3-medium" style="margin-top:10px;width:100%">Continue Shopping</a> 	
+									<a href="{% url 'checkout_cart' %}" class="w3-btn w3-border w3-black w3-border-white w3-hover-orange w3-round w3-medium" style="margin-top:10px;width:100%">Proceed to Checkout</a> 
+							</span>
+							{% endif %}
+						</div>
+					</div>
+				{% endif %}
+
+			</div> <!-- cart body end -->
+			 	
+		</div>
+		        
+		
+	</div>		
+{% endblock content %}
+
+{% block footer_js %}
+
+<script>
+
+	window.onload = function(){
+
+		cartMenu = document.querySelectorAll(".cart_menu");
+
+        var i;
+        for(i=0; i < cartMenu.length; i++){
+        	
+        	cartMenu[i].classList.add("w3-border");
+        	cartMenu[i].classList.add("w3-border-orange");
+        	
+        }
+		
+	}
+
+	function increase_quantity(product_id,product_name){
+		
+		quantity_el=document.getElementById("quantity_selected_" + product_id);
+		current_quantity = parseInt(quantity_el.innerHTML);
+		
+	
+		if(current_quantity>0){	
+			new_quantity = current_quantity + 1;
+			
+				updateCart(product_id,product_name, new_quantity);
+			}
+		
+
+	}
+
+	function decrease_quantity(product_id,product_name){
+
+		quantity_el=document.getElementById("quantity_selected_" + product_id);
+		current_quantity = parseInt(quantity_el.innerHTML);
+		
+		
+		if (current_quantity>1)	{
+			new_quantity = current_quantity - 1
+			updateCart(product_id,product_name, new_quantity);
+		}	
+		
+		
+	}
+
+	function confirm_remove(product_id,product_name, quantity){
+
+		create_action_button('deleteItemFromCart',product_id,false, product_name, true);
+		populate_pop_up_message("Are you sure you want to remove ", product_name, " from your Cart?", true, "Remove")
+		
+	}
+
+</script>
+
+{% endblock footer_js %}

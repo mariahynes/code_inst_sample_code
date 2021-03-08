@@ -1,0 +1,495 @@
+{% extends 'base.html' %}
+{% load global_extras %}
+{% load product_extras %}
+{% load order_extras %}
+{% load cart_extras %}
+{% load shipping_extras %}
+{% load countries %}
+{% load static %}
+{% block title %}
+	Order Summary
+{% endblock title %}
+{% block head_js %}
+		
+	
+	{% return_paypal_client as paypal_client_id %}		
+
+	<script src="https://js.stripe.com/v3/"></script> 
+	<script src="{% static 'js/main.js' %}"></script> 
+	<script src="https://scripts.sirv.com/sirv.js"></script>
+	<script type="text/javascript" src="https://www.paypal.com/sdk/js?client-id={{ paypal_client_id }}&currency=EUR">
+		
+	</script>
+	
+	<script>
+
+		var perfEntries = performance.getEntriesByType("navigation");
+		for (var i=0; i < perfEntries.length; i++) {
+			var p = perfEntries[i];
+			if(p.type=="back_forward"){
+				console.log(p.type);
+				location.reload(true);
+			}
+		}
+				
+		if(performance.navigation.type == 2){
+	   		console.log("old way");
+	   		location.reload(true);
+		}
+		
+	</script>
+
+{% endblock head_js %}
+{% block head_style %}
+
+	<link rel="stylesheet" href="{% static 'flags/sprite.css' %}">
+	<link rel="stylesheet" href="{% static 'css/radio_button.css' %}" type="text/css">
+	<link rel="stylesheet" href="{% static 'css/tooltip.css' %}" type="text/css">
+	
+	<style>
+		.w3-input{
+			padding:0px;
+		}
+	</style>
+{% endblock head_style %}
+
+{% block content %}
+
+{% if the_cookie_message %}
+
+	{% comment %}Cookies are not enabled so only show the pop-up{% endcomment %}
+	
+	{{ the_cookie_message }}
+	
+{% else %}	
+
+	<div id="content_body" class="w3-padding-32 w3-section w3-content w3-justify w3-text-grey">
+		
+		
+			<div class="w3-container">
+
+				<div class="w3-display-container w3-text-black w3-padding-16">
+					<a href="{% url 'checkout_cart' %}" class="w3-display-left w3-margin-bottom w3-btn w3-border w3-black w3-border-white w3-hover-orange w3-round w3-medium" style="font-family: 'Montserrat';margin-bottom:10px;"><< Back To Checkout Page</a>
+				</div>	
+
+			</div> 
+
+		
+				
+	    <div class="w3-row-padding w3-content w3-justify" style="margin:0 -16px;">
+	 		    
+	    	{% if shipping_address.shipping_address_country %}
+	  			{% get_country shipping_address.shipping_address_country as country %}
+	  		{% endif %}
+
+		    	<div class="w3-container w3-half"><!-- cart body start -->
+		    		
+		    		<div id="order_details" class="w3-container">
+
+						<div class="w3-display-container w3-text-black w3-padding-16">
+
+							<ul class="w3-ul w3-border w3-black">
+								<li class="w3-theme">
+									<h1 style="font-family: 'ChristopherHand';font-size:36px!important;">Delivery Details
+									<span class="w3-right add_flag_img">
+		    						</span>
+		    						</h1>
+								</li>
+							</ul>
+
+							<div class="w3-border w3-padding w3-small w3-text-orange w3-left-align" style="width:100%">
+									
+							  		<div class="w3-text-white">Deliver To:</div>
+
+								  	<span id="id_shipping_name_ro">
+								  		{% if shipping_address.shipping_name %}
+											{{ shipping_address.shipping_name }}<br>
+										{% endif %}
+									</span>
+
+								
+								  	<span id="id_shipping_address_line1_ro">
+								  		{% if shipping_address.shipping_address_line1 %}
+											{{ shipping_address.shipping_address_line1 }}<br>
+										{% endif %}
+									</span>
+								 	
+								
+								  	<span id="id_shipping_address_line2_ro">
+								  		{% if shipping_address.shipping_address_line2 %}
+											{{ shipping_address.shipping_address_line2 }}<br>
+										{% endif %}
+									</span>
+								
+								  	<span id="id_shipping_address_city_ro">
+								  		{% if shipping_address.shipping_address_city %}
+								  			{{ shipping_address.shipping_address_city }}<br>
+								  		{% endif %}
+								   </span>										 	
+								
+								  	<span id="id_shipping_address_state_ro">
+								  		{% if shipping_address.shipping_address_state %}
+								  			{{ shipping_address.shipping_address_state }}<br>
+								  		{% endif %}
+									</span>											
+								
+								  	<span id="id_shipping_address_postal_code_ro">
+								  		{% if shipping_address.shipping_address_postal_code %}
+								  			{{ shipping_address.shipping_address_postal_code }}<br>
+								  		{% endif %}
+									</span>
+								  	
+								
+								    <span  id="id_shipping_address_country_ro">
+
+								  		{% if shipping_address.shipping_address_country %}  
+											{{ country.name }} ({{ country.code }})
+								  		{% else %}
+								  			{{ shipping_address.shipping_address_country }}
+								  		{% endif %}
+								  	</span>
+
+								  	<br><br>
+
+								  	<div class="w3-text-white">Delivery Instructions/Notes:</div>
+								  	<span id="id_customer_notes_ro">
+								  		{% if delivery_instructions.customer_notes %}
+											{{ delivery_instructions.customer_notes }}
+										{% else %}
+											N/A
+										{% endif %}
+										
+									</span>
+
+									<br><br>
+
+								  	<div class="w3-text-white">Shipping Method:</div>
+								  	<span id="id_shipping_name_ro">
+								  		{% get_postage_type_display postage_details.postage_type as postage_type_display %}
+										{{ postage_type_display }}
+										
+									</span>
+									
+							</div>
+						</div>							
+					</div> 
+
+				</div> 
+				<div class="w3-container w3-half"><!-- cart body start -->
+
+					<div id="order_details" class="w3-container">
+
+						<div class="w3-display-container w3-text-black w3-padding-16">
+
+							<ul class="w3-ul w3-border w3-black">
+								<li class="w3-theme">
+									<h1 style="font-family: 'ChristopherHand';font-size:36px!important;">Payment Details
+									<span class="w3-right add_flag_img">
+		    						</span>
+		    						</h1>
+								</li>
+							</ul>
+
+							<div class="w3-border w3-padding w3-small w3-text-orange w3-left-align" style="width:100%">
+
+								<div class="w3-display-container">
+										<span>&nbsp;</span>
+									  	<span class="w3-display-right w3-text-orange w3-medium">
+									  		&euro;
+										</span>
+									</div>	
+
+						 		{% for product in the_cart %}	
+						      	{% get_total_product_items_available product.product_id as stock_level %}
+						      	{% get_max_per_purchase product.product_id as max_allowed %}
+						      	{% get_product_image_url product.product_id as product_image %}
+						      	{% calculate_product_subtotal_in_cart request product.product_id as product_price %}
+
+							 		<div class="w3-display-container w3-medium">
+										<span class="w3-text-white"style="font-family: 'ChristopherHand';font-size:24px;">{{ product.product_name }}</span>
+										({{ product.quantity }})
+									  	<span class="w3-display-right w3-text-white">
+									  		{{ product_price }}
+								
+										</span>
+									</div>	
+
+								{% endfor %}
+
+							</div>
+
+
+							<div class="w3-border w3-padding w3-medium w3-text-orange w3-left-align" style="width:100%">
+
+									
+
+									<div class="w3-display-container">
+										<span class="w3-text-white">Sub-Total</span>
+									  	<span class="w3-display-right w3-text-orange" id="id_sub_total_ro">
+									  		<b>{{ final_to_pay.sub_total }}</b>
+										</span>
+									</div>	
+
+									
+									
+							</div>
+
+							<div class="w3-border w3-padding w3-medium w3-text-orange w3-left-align" style="width:100%">
+
+									
+
+								
+
+									<div class="w3-display-container">
+										<span class="w3-text-white">Shipping</span>
+									  	<span class="w3-display-right w3-text-white" id="id_postage_cost_ro">
+									  		{{ postage_details.postage_cost }}
+										</span>
+										
+									</div>	
+									
+									
+							</div>
+
+							<div class="w3-border w3-padding w3-medium w3-text-orange w3-left-align" style="width:100%">
+							
+									<div class="w3-display-container">
+										<span class="w3-text-white">Discount
+
+											<span class="tooltip">
+	                                    	<i class="fa fa-exclamation-circle w3-text-orange"></i>
+											<span class="tooltiptext w3-white w3-tag w3-round w3-tiny w3-text-black w3-padding" style="margin-left:-130px;">
+												<b>
+													<span>{{ discount_details.discount_code }}</span>
+												</b>
+
+												<span>
+													{% if not discount_details.discount_code %}
+													No discount applied
+													{% else %}
+													{{ discount_details.discount_desc }}
+													{% endif %}
+												</span>
+											</span>
+										</span>
+
+										</span>
+									  	<span class="w3-display-right w3-text-white" id="id_discount_amount_ro">
+									  		{% if not discount_details.discount_amount == '0.00' %}
+									  		- 
+									  		{% endif %}
+									  		{{ discount_details.discount_amount }}
+									  		
+										</span>
+									</div>
+									
+							</div>
+
+							<div class="w3-border w3-padding w3-medium w3-text-orange w3-left-align" style="width:100%">
+							
+									<div class="w3-display-container">
+										<span class="w3-text-white">Total to Pay</span>
+									  	<span class="w3-display-right w3-text-orange" id="id_final_total_ro">
+									  		<b>{{ final_to_pay.final_total }}</b>
+										</span>
+									</div>
+									
+							</div>
+{% csrf_token %} 
+{% return_paypal_mode as paypal_env %}
+{% return_stripe_mode as stripe_env %}
+
+				{% if paypal_env == 'live' or stripe_env == 'live' or user.is_superuser %}
+
+						{% if not final_to_pay.final_total == "0.00" %}
+						
+							<div class="w3-medium w3-text-orange w3-left-align w3-margin-top" style="width:100%;">
+							
+									<div class="w3-container w3-orange w3-padding w3-round">
+										
+										
+											<span onclick="get_stripe_checkout(this, '{{ discount_details.discount_amount }}','{{ discount_details.discount_code }}','{{ discount_details.discount_desc }}')" id="STRIPE" class="w3-left w3-btn w3-black w3-round w3-medium" style="margin-left:0px; margin-top:5px; margin-bottom:5px; height: 35px; width:100%" >
+												<span class="w3-small" style="vertical-align: top;">Pay with</span>
+												<span style="font-size: 16px"><em><b> Card</b></em></span>
+											</span>
+											
+												
+
+										<span style="margin-top:5px;">
+											<div id="paypal-button-container"></div>
+											
+										</span>
+
+											
+
+										<script>
+											
+										    paypal.Buttons({
+ 
+    												env: '{{ paypal_env }}', /* sandbox | live */
+												    style: {
+												                layout: 'horizontal',   // horizontal | vertical 
+												                size:   'responsive',   /* medium | large | responsive*/
+												                shape:  'rect',         /* pill | rect*/
+												                color:  'blue', 		/* gold | blue | silver | black*/
+												                height: 35,  
+												                label:  'pay',      
+												                fundingicons: false,    /* true | false */
+												                tagline: false          /* true | false */
+												    }, 
+														 
+												     	onError: function (err) {
+														    console.log("Error is: " + err.description);
+														    populate_pop_up_message("Sorry, but your ", "Paypal", " payment method has returned an issue. Please refresh your Cart and try again.", false);
+														   
+														 },
+
+										 				onCancel: function (data) {
+										 					cancel_url=get_cancel_url()
+														    window.location.href=cancel_url;
+														},
+
+												    	createOrder: function() {
+												 
+												   			return fetch('/create_checkout_session/PAYPAL/', {
+															    method: 'post',
+															    headers: {
+															      'content-type': 'application/json',
+															    }
+															  }).then(function(res) {
+															    return res.json();
+															  }).then(function(data) {
+															  	or = data.order_id
+															  	cid = data.cart_id_for_ref
+															  	return_url = data.return_url
+															    return data.id; 
+															  });
+
+ 														},
+
+													   
+														
+														// Finalize the transaction
+												            onApprove: function(data, actions) {
+												            	actions.order.capture()
+												            	actions.redirect(return_url)											                
+												            }
+								          
+															 
+												}).render('#paypal-button-container');
+										  </script>
+
+									</div>
+										
+							</div>
+						
+								
+
+						{% else %}
+							{% comment %}if discount resulted in zero to pay, don't show payment buttons{% endcomment %}
+							<div class="w3-medium w3-text-orange w3-left-align w3-margin-top" style="width:100%">
+							
+								<div class="w3-container w3-orange w3-padding w3-round">
+
+									<span onclick="process_order('{{final_to_pay.final_total}}')" class="w3-right w3-btn w3-black w3-round w3-medium" style="margin-top:5px; height: 35px; width:155px;" >
+											<span class="w3-small" style="vertical-align: top;">Confirm</span>
+											<span style="font-size: 16px"><em><b> Order</b></em></span>
+										</span>
+
+
+								</div>
+							</div>
+
+						{% endif %}
+
+			{% else %}
+				{% comment %}if test mode is on, only activate payment buttons to Admin {% endcomment %}
+				<div class="w3-medium w3-text-orange w3-left-align w3-margin-top" style="width:100%">
+							
+					<div class="w3-container w3-orange w3-padding w3-round">
+
+						<span class="w3-right w3-btn w3-black w3-round w3-medium w3-disabled" style="margin-top:5px; height: 35px; width:155px;" >
+								<span class="w3-small" style="vertical-align: top;">Coming</span>
+								<span style="font-size: 16px"><em><b> Soon</b></em></span>
+							</span>
+
+
+					</div>
+				</div>
+
+
+			{% endif %}
+
+
+							
+						</div>							
+						
+						
+					</div> 
+
+				</div>
+
+				
+				
+			 	
+		</div>
+
+		        
+		
+	</div>
+
+
+
+{% endif %}
+	  
+	
+
+
+{% endblock content %}
+
+
+{% block footer_js %}
+
+<script>
+
+	window.onload = function(){
+
+		
+		cartMenu = document.querySelectorAll(".cart_menu");
+
+        var i;
+        for(i=0; i < cartMenu.length; i++){
+        	
+        	cartMenu[i].classList.add("w3-border");
+        	cartMenu[i].classList.add("w3-border-orange");
+        	
+        }
+		
+		start_message="{{ page_pop_up_message }}";
+        console.log(start_message);
+        if (start_message){
+        	console.log("open pop-up");
+        	populate_pop_up_message(start_message, "", "", false);
+        }
+
+
+
+	}
+
+</script>
+<script>
+
+
+
+function get_cancel_url(){
+
+	var cancel_url;
+	cancel_url = "/cancelled?or=" + or + "&cid=" + cid;
+	return cancel_url
+}
+
+
+
+</script>
+
+{% endblock footer_js %}

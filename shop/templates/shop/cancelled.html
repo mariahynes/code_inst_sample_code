@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block head_js %}
+	
+{% endblock head_js %}
+
+{% block content %}
+	<!-- Styles Section -->
+	  <div class="w3-padding-32 w3-content" id="styles">
+	    <h2 class="w3-text-grey">{{ cancel_header }}</h2>
+	    <hr class="w3-opacity">
+
+	    <div class="w3-container">
+	    	<p>{% autoescape off %}{{ cancel_message }}{% endautoescape %}</p>
+
+	    </div>
+
+	
+
+{% endblock content %}
+

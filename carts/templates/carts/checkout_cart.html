@@ -1,0 +1,446 @@
+{% extends 'base.html' %}
+{% load global_extras %}
+{% load product_extras %}
+{% load order_extras %}
+{% load cart_extras %}
+{% load shipping_extras %}
+{% load discount_extras %}
+{% load countries %}
+{% load static %}
+{% block title %}
+	Checkout Cart
+{% endblock title %}
+{% block head_js %}
+	<script src="https://js.stripe.com/v3/"></script> 
+	<script src="{% static 'js/main.js' %}"></script> 
+	<script src="https://scripts.sirv.com/sirv.js"></script>
+	<script>
+
+		var perfEntries = performance.getEntriesByType("navigation");
+		for (var i=0; i < perfEntries.length; i++) {
+			var p = perfEntries[i];
+			if(p.type=="back_forward"){
+				console.log(p.type);
+				location.reload(true);
+			}
+		}
+				
+		if(performance.navigation.type == 2){
+	   		console.log("old way");
+	   		location.reload(true);
+		}
+		
+	</script>
+{% endblock head_js %}
+{% block head_style %}
+
+	<link rel="stylesheet" href="{% static 'flags/sprite.css' %}">
+	<link rel="stylesheet" href="{% static 'css/radio_button.css' %}" type="text/css">
+	<link rel="stylesheet" href="{% static 'css/tooltip.css' %}" type="text/css">
+	
+	<style>
+		.w3-input{
+			padding:0px;
+		}
+	</style>
+{% endblock head_style %}
+
+{% block content %}
+
+{% if the_cookie_message %}
+
+	{% comment %}Cookies are not enabled so only show the pop-up{% endcomment %}
+	
+	{{ the_cookie_message }}
+	
+{% else %}		
+	{% include "pop_up_address.html" %} 
+	{% include "pop_up_delivery_details.html" %} 
+	{% include "pop_up_discount_code.html" %} 
+
+	<div id="content_body" class="w3-padding-32 w3-section w3-content w3-justify w3-text-grey">
+
+		<div class="w3-container">
+
+				<div class="w3-display-container w3-text-black w3-padding-16">
+					<a href="{% url 'view_cart' %}" class="w3-display-left w3-margin-bottom w3-btn w3-border w3-black w3-border-white w3-hover-orange w3-round w3-medium" style="font-family: 'Montserrat';margin-bottom:10px;"><< Back To Cart</a>
+				</div>	
+
+			</div> 
+
+	    <div class="w3-row-padding w3-content w3-justify" style="margin:0 -16px;">
+	 		    	
+		    	{% if cart_id %}
+		    		{% calculate_cart_subtotal_in_cart request as initial_sub_total %}
+		    		{% calculate_final_total_in_cart request as initial_final_total %}
+		    		{% get_customer_notes request as initial_delivery_details %}
+		    		{% get_cart_discount_amount request as initial_discount_total %}
+		    		{% get_cart_discount_code request as initial_discount_code %}
+		    		{% get_cart_discount_desc request as initial_discount_message %}
+		    	{% endif %}
+		    	
+		    	<div class="w3-container w3-half"><!-- cart body start -->
+		    		
+		    		<div id="shipping_address" class="w3-container">
+
+		    			{% if shipping_address_form.shipping_address_country.value %}
+				  			{% get_country shipping_address_form.shipping_address_country.value as country %}
+				  		{% endif %}
+
+						<div class="w3-display-container w3-text-black w3-padding-16">
+							<ul class="w3-ul w3-border w3-black">
+								<li class="w3-theme">
+									<h1 style="font-family: 'ChristopherHand';font-size:36px!important;">Shipping Address
+									<span class="w3-right add_flag_img">
+										{% if country %}
+										<img class="flag_img w3-border w3-border-white" style="margin-bottom:0px;" src="{{ country.flag }}" />
+										
+										{% endif %}
+		    						</span>
+		    						</h1>
+								</li>
+							</ul>
+							
+									<div class="w3-border w3-padding w3-right w3-small w3-text-orange w3-right-align" style="width:100%">
+																			
+										  	<span id="id_shipping_name_ro">
+										  		{% if shipping_address_form.shipping_name.value %}
+													{{ shipping_address_form.shipping_name.value }}<br>
+												{% endif %}
+											</span>
+
+										
+										  	<span id="id_shipping_address_line1_ro">
+										  		{% if shipping_address_form.shipping_address_line1.value %}
+													{{ shipping_address_form.shipping_address_line1.value }}<br>
+												{% endif %}
+											</span>
+										 	
+										
+										  	<span id="id_shipping_address_line2_ro">
+										  		{% if shipping_address_form.shipping_address_line2.value %}
+													{{ shipping_address_form.shipping_address_line2.value }}<br>
+												{% endif %}
+											</span>
+										
+										  	<span id="id_shipping_address_city_ro">
+										  		{% if shipping_address_form.shipping_address_city.value %}
+										  			{{ shipping_address_form.shipping_address_city.value }}<br>
+										  		{% endif %}
+										   </span>										 	
+										
+										  	<span id="id_shipping_address_state_ro">
+										  		{% if shipping_address_form.shipping_address_state.value %}
+										  			{{ shipping_address_form.shipping_address_state.value }}<br>
+										  		{% endif %}
+											</span>											
+										
+										  	<span id="id_shipping_address_postal_code_ro">
+										  		{% if shipping_address_form.shipping_address_postal_code.value %}
+										  			{{ shipping_address_form.shipping_address_postal_code.value }}<br>
+										  		{% endif %}
+											</span>
+										  	
+										
+										    <span  id="id_shipping_address_country_ro">
+
+										  		{% if shipping_address_form.shipping_address_country.value %}  
+													{{ country.name }} ({{ country.code }})
+										  		{% else %}
+										  			{{ shipping_address_form.shipping_address_country.value }}
+										  		{% endif %}
+										  	</span>
+										  	<br>
+										  	<span onclick="open_address();" class="w3-right w3-margin-top w3-btn w3-border w3-black w3-border-white w3-hover-orange w3-round w3-small" style="font-family: 'Montserrat';margin-bottom: 10px;">Update Shipping Address</span>
+									</div>
+								
+								
+						</div>							
+					</div> 
+
+			 		<div id="shipping_options" class="w3-container ">
+						<div class="w3-display-container w3-text-black w3-padding-16">
+				    		<ul class="w3-ul w3-border w3-black">
+				    			<li class="w3-theme">
+									<h1 style="font-family: 'ChristopherHand';font-size:36px!important;">Shipping Options
+										<span class="w3-right w3-margin-top" style="font-family: 'Montserrat';font-size:24px!important;">&euro;</span>
+									</h1>
+								</li>
+							</ul>
+							
+							<div id="shipping_country_options" class="w3-border w3-padding-16 " style="width:100%">		      				
+								
+									<span id="enter_shipping_country" class="w3-left w3-small w3-text-orange" style="margin-left:16px">
+										{% if not country %}
+								  		Enter your <span style="text-decoration:underline;" class="w3-hover-orange" onclick="open_address();">Shipping Country</span> to view Shipping Rates
+								  		<br>
+								  		{% endif %}
+								  	</span>
+						  		
+
+			      				<form role="form" id="postage_type_form" class="w3-container" >
+			      					
+			      					<span class="w3-text-orange w3-small country_name">{{ country.name }}</span>
+			      					
+			      					<span class="add_flag_img">				      						
+			      						{% if country %}
+											<img class="flag_img w3-border w3-border-white" style="margin-bottom:0px;" src="{{ country.flag }}" />			
+										{% endif %}
+			      					</span>				      				
+   									{% for value, name in postage_type_form.fields.postage_type.choices %}
+                                        {% if value %} 
+                                            <div class="w3-display-container w3-text-white w3-padding w3-margin-top" style="margin-bottom:10px">
+	                                            <span class="w3-display-left">
+	                                           		{% get_postage_type_description value as postage_type_desc %}
+	                                            	<label class="container">{{ name }}													
+													  <input onclick="update_shipping_total('{{ value }}','{{ name }}');" type="radio" value="{{ value }}" {% if value == selected_postage_type %} checked {% endif %} name="radio">
+													  <span class="checkmark"></span>
+													</label>
+													
+	                                            </span>	
+	                                            {% if country.code %}
+	                                            	{% get_shipping_cost country.code count_cart_items value as initial_option_cost %}
+	                                            {% endif %}
+	                                            <div class="tooltip w3-display-right" style="margin-right:50px">
+	                                            <i class="fa fa-question-circle w3-text-orange"></i>
+													<span class="tooltiptext w3-white w3-tag w3-round w3-tiny w3-text-black w3-padding">{{ postage_type_desc }}</span>
+												</div>
+                                            	<span id="postage_{{ value }}" class="w3-display-right" style="font-weight: bold">{{ initial_option_cost }}</span>
+                                        	</div>
+                                        {% endif %}
+                                    {% endfor %}
+   								</form>
+   							</div>			
+								
+						 </div>
+					</div>
+
+					
+
+					<div id="delivery_notes" class="w3-container">
+						<div class="w3-display-container w3-text-black ">
+							
+							<ul class="w3-ul w3-border w3-black">
+								<li class="w3-theme">
+									<h1 style="font-family: 'ChristopherHand';font-size:36px!important;">Delivery Instructions</h1>
+								</li>
+							</ul>
+
+						  	<div class="w3-border w3-padding w3-right w3-small w3-text-orange w3-right-align" style="width:100%">
+						  	
+							  	<span id="id_customer_notes_ro">
+							  		{{ delivery_details_form.customer_notes.value }}
+							  	</span>
+
+							  	<br>
+
+							  	<span onclick="open_instructions();" class="w3-right w3-margin-top w3-btn w3-border w3-black w3-border-white w3-hover-orange w3-round w3-small" style="font-family: 'Montserrat';margin-bottom: 10px;">
+							  		{% if initial_delivery_details %}Edit{% else %}Add Note{% endif %}
+							  	</span>
+						  	</div>
+						</div>
+					</div>
+				 		
+					
+				</div> 
+
+
+
+				<div class="w3-container w3-half"><!-- address body start -->
+
+					<div id="order_summary" class="w3-container ">
+
+						<div class="w3-display-container w3-text-black w3-padding-16">
+				    		<ul class="w3-ul w3-border w3-black">
+				    			<li class="w3-theme">
+									<h1 style="font-family: 'ChristopherHand';font-size:36px!important;">Order Summary
+										<span class="w3-right w3-margin-top" style="font-family: 'Montserrat';font-size:24px!important;">&euro;</span>
+									</h1>
+								</li>
+								  
+						    	{% for product in the_cart %}	
+						      	{% get_total_product_items_available product.product_id as stock_level %}
+						      	{% get_max_per_purchase product.product_id as max_allowed %}
+						      	{% get_product_image_url product.product_id as product_image %}
+						      	{% calculate_product_subtotal_in_cart request product.product_id as product_price %}
+						      	<div class="w3-display-container">
+						      		<li class="w3-theme" >
+						      		
+							      		{% if product_image %}
+							      			<img class="w3-display-left w3-hide-small" src="{{ product_image }}" style="height:50px; margin-left:1px;" title="{{ product.product_name }} {% return_site_name %}"/ >
+										{% endif %}
+										<span class="w3-hide-small" style="font-family: 'ChristopherHand';font-size:24px; margin-left:90px;">
+											{{ product.product_name }}
+										</span>
+										<span class="w3-hide-large w3-hide-medium" style="font-family: 'ChristopherHand';font-size:24px;">
+											{{ product.product_name }}
+										</span>
+										 ({{ product.quantity }})
+										<span class="w3-padding w3-display-right" style="font-weight: bold;">
+										{{ product_price }}
+											</span>
+							        
+									</li>
+								</div>
+						 		{% endfor %}
+
+								<li class="w3-theme w3-border-top w3-text-orange">
+									  Sub-Total<span class="w3-right cart_subtotal" style="font-weight: bold">{{ initial_sub_total }}</span>
+								</li>
+					 		</ul>
+					 	</div>
+					 </div>
+				
+
+
+					<div id="payment_summary" class="w3-container">
+							<div class="w3-display-container w3-text-black ">
+								
+									<ul class="w3-ul w3-border w3-black">
+										<li class="w3-theme">
+											<h1 style="font-family: 'ChristopherHand';font-size:36px!important;">Payment Summary
+												<span class="w3-right w3-margin-top" style="font-family: 'Montserrat';font-size:24px!important;">&euro;</span>
+											</h1>
+										</li>
+									  <li class="w3-theme">
+									  	Sub-Total<span class="w3-right cart_subtotal" style="font-weight: bold">{{ initial_sub_total }}</span>
+									  </li>
+									  									  
+									  <li class="w3-theme">
+									  	Shipping&nbsp; 
+									  	<span class="add_flag_img">
+									  		{% if country %}
+
+									  			{% get_shipping_cost country count_cart_items selected_postage_type as initial_shipping_total %}
+									  			<img class="flag_img w3-border w3-border-white" style="margin-bottom:0px;" src="{{ country.flag }}" />
+
+									  		{% endif %}
+									  	</span> 
+										
+									  	<span class="w3-right cart_shipping_total" style="font-weight: bold">{{ initial_shipping_total }}</span>
+									  </li>
+
+									   <li class="w3-theme">
+									   	
+									  	Discount
+									  	<span class="tooltip">
+	                                    	<i class="fa fa-exclamation-circle w3-text-orange"></i>
+											<span class="tooltiptext w3-white w3-tag w3-round w3-tiny w3-text-black w3-padding" style="margin-left:-130px;">
+												<b>
+													<span id="id_discount_code_ro">{{ initial_discount_code }}</span>
+												</b>
+
+												<span id="id_discount_desc_ro">
+													{% if not initial_discount_message %}
+													No discount applied
+													{% else %}
+													{{ initial_discount_message }}
+													{% endif %}
+												</span>
+											</span>
+										</span>
+									  	<span class="w3-right cart_discount_total" style="font-weight: bold">
+									  	{{ initial_discount_total }}
+									  	</span>
+									  	<span onclick="open_discount();" class="w3-tiny" style="font-family: 'Montserrat';margin-left:10px; text-decoration: underline; cursor: pointer;">[Add Code]
+							  			</span>
+									  	
+
+
+
+									  </li>
+
+									  <li class="w3-theme w3-text-orange">
+									  	Total<span class="w3-right cart_final_total" style="font-weight: bold">{{ initial_final_total }}</span>
+									  </li>
+
+									</ul>
+								
+							</div>
+							{% comment %}
+								<span onclick="check_items_for_payment()" class="w3-right w3-btn w3-border w3-black w3-border-white w3-hover-orange w3-round w3-medium" style="margin-top:10px">
+									Choose Payment Type
+								</span>
+							{% endcomment %}
+							
+							<form role="form" method="post" action="/order_summary/">
+								{% csrf_token %}
+								<input type="submit" value="Choose Payment Type" class="w3-right w3-btn w3-border w3-black w3-border-white w3-hover-orange w3-round w3-medium" style="margin-top:10px">
+							</form>
+							
+					</div>
+
+							
+				</div> <!-- address body end -->
+			 	
+		</div>
+		        
+		
+	</div>
+
+
+
+{% endif %}
+	  
+	
+
+
+{% endblock content %}
+
+
+{% block footer_js %}
+
+<script>
+
+	window.onload = function(){
+
+		
+		cartMenu = document.querySelectorAll(".cart_menu");
+
+        var i;
+        for(i=0; i < cartMenu.length; i++){
+        	
+        	cartMenu[i].classList.add("w3-border");
+        	cartMenu[i].classList.add("w3-border-orange");
+        	
+        }
+		
+        start_message="{{ page_pop_up_message }}";
+        console.log(start_message);
+        if (start_message){
+        	console.log("open pop-up");
+        	populate_pop_up_message(start_message, "", "", false);
+        }
+
+	}
+
+
+function open_address(){
+	document.getElementById('pop_up_address').style.display='block';
+}
+
+function open_instructions(){
+	document.getElementById('pop_up_instructions').style.display='block';
+}
+
+function open_discount(){
+	document.getElementById('pop_up_discount').style.display='block';
+}
+
+function update_shipping_total(postageTypeValue, postageTypeName){
+
+	displayed_rate = document.getElementById("postage_"+postageTypeValue).innerHTML;
+
+	updateShippingCost(postageTypeValue,postageTypeName);
+	
+}
+
+function check_validation(){
+	console.log("Going to order_summary")
+	location.href="/order_summary/";
+	console.log("Gone to order_summary")
+}
+
+</script>
+
+{% endblock footer_js %}

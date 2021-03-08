@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+	{% load static %}
+
+	<!-- Styles Section -->
+	  <div class="w3-padding-32 w3-content" id="styles">
+	    <h2 class="w3-text-grey">Styles</h2>
+	    <hr class="w3-opacity">
+
+	    <!-- Grid for photos -->
+	    <div class="w3-row-padding" style="margin:0 -16px">
+	      <div class="w3-half">
+	        <div class="w3-container">
+	          <div class="w3-tooltip">
+	            <img src="{% static 'images/shop/shady_original.jpg' %}" class="w3-hide-small" style="width:100%" title="The Original Shady Dog" onclick="showDetails('original_style')">
+	            <img src="{% static 'images/shop/shady_original.jpg' %}" class="w3-hide-large w3-hide-medium" style="width:100%" title="The Original Shady Dog Small Screen">
+	            <div id="original_style" class="w3-text" style="width:100%; margin-bottom:20px;">
+	              <ul class="w3-ul w3-center w3-card w3-hover-shadow">
+	                <li class="w3-dark-grey w3-xlarge w3-padding-32">Original Style</li>
+	                <li class="w3-padding-16">Polarized
+	                  <span class="w3-opacity">Yes</span></li></li>
+	                <li class="w3-padding-16">Size
+	                  <span class="w3-opacity">3cm x 8cm</span></li>
+	                  <li class="w3-padding-16">Weight
+	                  <span class="w3-opacity">0.2kg</span></li>
+	                  <li class="w3-padding-16">Unisex
+	                  <span class="w3-opacity">Yes</span></li>
+	                  <li class="w3-padding-16">Lense Colour
+	                  <span class="w3-opacity">Grey</span></li>
+	                  <li class="w3-padding-16">Breed
+	                  <span class="w3-opacity">Bulldog</span></li>
+	                <li class="w3-padding-16">
+	                  <h2>€ 45</h2>
+	                </li>
+	                <li class="w3-light-grey w3-padding-24">
+	                  <button class="w3-button w3-white w3-padding-large w3-hover-black">Buy</button>
+	                </li>
+	              </ul>
+	            </div>
+	          </div>
+	        </div>
+	      </div>
+
+	      <div class="w3-half">
+	        <div class="w3-container">
+	          <div class="w3-tooltip">
+	            <img src="{% static 'images/shop/shady_aviator.jpg' %}" class="w3-hide-small" style="width:100%" title="Aviator Shady Dog" onclick="showDetails('aviator_style')">
+	            <img src="{% static 'images/shop/shady_aviator.jpg' %}" class="w3-hide-large w3-hide-medium" style="width:100%" title="Aviator Shady Dog Small Screen">
+	            <div id="aviator_style" class="w3-text" style="width:100%;margin-bottom:20px;">
+	              <ul class="w3-ul w3-center w3-card w3-hover-shadow">
+	              <li class="w3-dark-grey w3-xlarge w3-padding-32">Aviator Style</li>
+	              <li class="w3-padding-16">Polarized
+	                  <span class="w3-opacity">Yes</span></li></li>
+	                <li class="w3-padding-16">Size
+	                  <span class="w3-opacity">3cm x 8cm</span></li>
+	                  <li class="w3-padding-16">Weight
+	                  <span class="w3-opacity">0.2kg</span></li>
+	                  <li class="w3-padding-16">Unisex
+	                  <span class="w3-opacity">Yes</span></li>
+	                  <li class="w3-padding-16">Lense Colour
+	                  <span class="w3-opacity">Grey</span></li>
+	                  <li class="w3-padding-16">Breed
+	                  <span class="w3-opacity">Bulldog</span></li>
+	              <li class="w3-padding-16">
+	                <h2>€ 55</h2>
+	              </li>
+	              <li class="w3-light-grey w3-padding-24">
+	                <button class="w3-button w3-white w3-padding-large w3-hover-black">Buy</button>
+	              </li>
+	            </ul>
+	            </div>
+	          </div>
+	        </div>
+	      </div>
+	    <!-- End photo grid -->
+	    </div>
+	  <!-- End Styles Section -->
+	  </div>
+
+	<template>
+	  <!-- Styles Section Alternative -->
+	  <div class="w3-padding-32 w3-content" id="styles">
+	    <h2 class="w3-text-grey">Styles</h2>
+	    <hr class="w3-opacity">
+
+	    <!-- Grid for photos -->
+	    <div class="w3-row-padding" style="margin:0 -16px">
+	      <div class="w3-half">
+	        <img src="{% static 'images/shop/shady_original.jpg' %}" style="width:100%" title="The Original Shady Dog" onclick="showDetails('original')">
+	        <div id="original" class="w3-container w3-hide">
+	          <ul class="w3-ul w3-center w3-card w3-hover-shadow">
+	          <li class="w3-dark-grey w3-xlarge w3-padding-32">Original Design</li>
+	          <li class="w3-padding-16">Web Design</li>
+	          <li class="w3-padding-16">Photography</li>
+	          <li class="w3-padding-16">5GB Storage</li>
+	          <li class="w3-padding-16">Mail Support</li>
+	          <li class="w3-padding-16">
+	            <h2>$ 10</h2>
+	            <span class="w3-opacity">per month</span>
+	          </li>
+	          <li class="w3-light-grey w3-padding-24">
+	            <button class="w3-button w3-white w3-padding-large w3-hover-black">Sign Up</button>
+	          </li>
+	        </ul>
+	        </div>
+	        
+	      </div>
+
+	      <div class="w3-half">
+	        
+	        <img src="{% static 'images/shop/shady_aviator.jpg' %}" style="width:100%" title="Aviator Shady Dog" onclick="showDetails('aviator')">
+	        <div id="aviator" class="w3-container w3-hide">
+	          <ul class="w3-ul w3-center w3-card w3-hover-shadow">
+	          <li class="w3-dark-grey w3-xlarge w3-padding-32">Aviator Design</li>
+	          <li class="w3-padding-16">Web Design</li>
+	          <li class="w3-padding-16">Photography</li>
+	          <li class="w3-padding-16">5GB Storage</li>
+	          <li class="w3-padding-16">Mail Support</li>
+	          <li class="w3-padding-16">
+	            <h2>$ 10</h2>
+	            <span class="w3-opacity">per month</span>
+	          </li>
+	          <li class="w3-light-grey w3-padding-24">
+	            <button class="w3-button w3-white w3-padding-large w3-hover-black">Sign Up</button>
+	          </li>
+	        </ul>
+	        </div>
+	      </div>
+	    <!-- End photo grid -->
+	    </div>
+	  <!-- End Styles Section Alternative -->
+	  </div>
+	</template>
+
+{% endblock content %}

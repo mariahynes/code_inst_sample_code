@@ -1,0 +1,449 @@
+{% load static %}
+{% load global_extras %}
+{% load product_extras %}
+{% load cart_extras %}
+<!DOCTYPE html>
+<html>
+<head>
+<title>{% block title %}{% return_site_name %}{% endblock title %}</title>
+
+<meta name="description" content="The Classic Pug - Polarised">
+
+<!-- Facebook Meta Tags -->
+<meta property="og:url" content="https://www.shadydogdesign.com">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Shady Dog Design">
+<meta property="og:description" content="">
+<meta property="og:image" content="{% return_domain_url_no_slash %}{% static 'images/base/shady_dog.png' %}">
+<meta property="og:image:width" content="600" />
+<meta property="og:image:height" content="310" />
+
+<!-- Twitter Meta Tags -->
+<meta name="twitter:card" content="summary_large_image">
+<meta property="twitter:domain" content="shadydogdesign.com">
+<meta property="twitter:url" content="https://www.shadydogdesign.com">
+<meta name="twitter:title" content="Shady Dog Design">
+<meta name="twitter:description" content="The Classic Pug - Polarised">
+<meta name="twitter:image" content="{% return_domain_url_no_slash %}{% static 'images/base/shady_dog.png' %}">
+
+<!-- WhatsApp -->
+<meta property="og:image" content="{% return_domain_url_no_slash %}{% static 'images/base/shady_dog_sm.png' %}">
+<meta property="og:image:width" content="256" />
+<meta property="og:image:height" content="256" />
+
+<link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/favicon/apple-touch-icon.png' %}" />
+<link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon/favicon-32x32.png' %}" />
+<link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicon/favicon-16x16.png' %}" />
+<link rel="icon" type="image/png" sizes="512x512" href="{% static 'images/favicon/android-chrome-512x512.png' %}" />
+<link rel="icon" type="image/png" sizes="192x192" href="{% static 'images/favicon/android-chrome-192x192.png' %}" />
+<link rel="manifest" href="{% static 'images/favicon/site.webmanifest' %}" /> 
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+  @font-face{
+    
+    font-family: "ChristopherHand";
+    src: url("{% static 'fonts/comesinhandy.ttf' %}")
+
+  }
+  .fb-like{filter:hue-rotate(171deg);} 
+
+</style>
+
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+<link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Maven+Pro:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="{% static 'css/tooltip.css' %}" type="text/css">
+<style>
+body, h1,h2,h3,h4,h5,h6 {font-family: "Montserrat", sans-serif}
+.w3-row-padding img {margin-bottom: 12px}
+/* Set the width of the sidebar to 120px */
+.w3-sidebar {width: 120px;background: #222;}
+/* Add a left margin to the "page content" that matches the width of the sidebar (120px) */
+#main {margin-left: 120px}
+
+/* Remove margins from "page content" on small screens */
+@media only screen and (max-width: 600px) {#main {margin-left: 0}}
+
+
+</style>
+
+{% block head_style %}{% endblock head_style %}
+{% block head_js %}{% endblock head_js %}
+
+{% block analytics %}
+  {% return_ga_setting as ga_setting %}
+  {% if ga_setting == 'live' %}
+    {% include "analytics_tracking.html" %}
+  {% else %}
+    {% include "analytics_tracking_in_test.html" %}
+  {% endif %}
+{% endblock analytics %}
+
+{% return_facebook_id as facebook_id %}
+{% return_facebook_pixel_id as facebook_pixel_id %}
+
+<!-- Facebook Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '{{ facebook_pixel_id }}');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id={{ facebook_pixel_id }}&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Facebook Pixel Code -->
+
+</head>
+<body class="w3-black">
+
+<div id="fb-root"></div>
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_GB/sdk.js#xfbml=1&autoLogAppEvents=1&version=v9.0&appId={{ facebook_id }}" nonce="ahq99GnJ"></script>
+
+
+
+
+{% include "pop_up_message.html" %} 
+
+{% get_active_products as active_products %}
+
+{% get_cart_id request as cart_id %}
+
+{% if cart_id %}
+
+  {% get_total_quantity_in_cart request as item_count %}
+{% else %}
+
+  {% zero_in_cart as item_count %}
+{% endif %}
+<!-- Icon Bar (Sidebar - hidden on small screens) -->
+<nav class="w3-sidebar w3-black w3-bar-block w3-small w3-hide-small w3-center";">
+
+    <!-- Avatar image in top left corner -->
+    <div class="w3-display-container">
+      <div class="w3-display-middle" style="font-family: 'ChristopherHand';font-size:19px"></div>
+      <img src="https://databasis.sirv.com/Images/shadydog/shady_dog_product_images/bg_black.png"  alt="" / style="width:100%">
+    </div>
+
+    <a href="/" class="shop_home w3-bar-item w3-button w3-padding-large w3-hover-black">
+      <img src="{% static 'images/base/shady_dog_logo.jpg' %}" alt="logo" class="w3-image w3-circle" style="width:80%">
+      {% comment %}
+      <img src="https://databasis.sirv.com/Images/shadydog/shady_dog_product_images/shady_dog_logo_inverted.jpg"  alt="" / style="width:70%">
+      {% endcomment %}
+      
+      <!--<i class="fa fa-paw w3-xxlarge"></i>-->
+      <p>Home</p>
+    </a>
+    
+    <a onclick="show_styles()" href="javascript:void(0)" class="style_menu w3-bar-item w3-button w3-padding-large w3-hover-black">
+      <i class="fa fa-eye w3-xxlarge"></i>
+      <p>Styles &nbsp;<i class="fa fa-caret-down"></i></p>
+    </a>
+
+    <div id="style_list" class="w3-hide style_list" style="font-family: 'ChristopherHand';font-size:24px">
+        {% for product in active_products %}
+          <a href="{% url 'show_product' product_id=product.id %}" class="w3-bar-item w3-button w3-hover-orange">
+            <span class="style_item">{{ product.product_display_name }}</span>
+          </a>
+        {% endfor %}
+     </div>
+      
+        <div class="w3-bar-item cart_menu w3-hover-black">
+            <a href="{% url 'view_cart' %}" class=" w3-button w3-padding-large w3-hover-black">
+             <div class="w3-display-container"><span class="w3-badge w3-tiny w3-display-middle w3-black cart_item_count">{{ item_count }}</span><i class="fa fa-shopping-bag w3-xxlarge"></i></div>
+              <p>Cart</p>
+            </a>
+        </div>
+    
+          
+    {% if user.is_superuser %}
+
+        <a href="/admin" class="w3-bar-item w3-button w3-padding-large w3-hover-black">
+        <i class="fa fa-cogs w3-xxlarge"></i>
+        <p>Admin</p>
+      </a>
+  
+    {%  endif %}
+</nav>
+
+<!-- Hidden Sidebar (reveals when clicked on menu icon)-->
+
+<!-- Menu icon to open sidebar -->
+<span class="w3-button w3-top w3-border w3-border-orange w3-white w3-xlarge w3-text-black w3-hover-text-black w3-hide-large w3-hide-medium" style="width:auto;right:0;" onclick="openNav()"><i class="fa fa-bars"></i></span>
+
+<nav class="w3-sidebar w3-black w3-animate-right w3-xxlarge" style="display:none;padding-top:150px;right:0;z-index:2" id="mySidebar">
+  <a href="javascript:void(0)" onclick="closeNav()" class="w3-button w3-black w3-xxxlarge w3-display-topright" style="padding:0 12px;">
+    <i class="fa fa-remove"></i>
+  </a>
+  <div class="w3-bar-block w3-center">
+    <img src="{% static 'images/base/shady_dog_logo.jpg' %}" alt="Logo" class="3-bar-item w3-circle w3-text-grey w3-hover-black" style="width:90px">
+    <a href="{% url 'index' %}" class="w3-bar-item w3-button w3-text-white w3-hover-black" onclick="closeNav()">Home</a>
+    <a onclick="show_styles()" href="javascript:void(0)" class="w3-bar-item w3-button w3-text-white w3-hover-black">Styles &nbsp;<i class="fa fa-caret-down" style="font-size: 70%" ></i></a>
+        <div id="style_list_sm" class="w3-hide style_list">
+          {% for product in active_products %}
+            <a style="font-family: 'ChristopherHand';font-size:36px!important;" href="{% url 'show_product' product_id=product.id %}" class="w3-bar-item w3-button w3-medium">
+            <span class="style_item">{{ product.product_display_name }}</span>
+          </a>
+          {% endfor %}
+         
+        </div>
+
+        
+        <div class="w3-display-container">
+          <a href="{% url 'view_cart' %}" class="w3-bar-item w3-button w3-text-white w3-hover-black" onclick="closeNav()">Cart</a>
+           <div class="w3-display-container">
+            <div class="w3-badge w3-tiny w3-display-middle w3-black cart_item_count">{{ item_count }}</div><i class="fa fa-shopping-bag w3-xxlarge"></i>
+         </div>
+        </div>
+      {% if user.is_superuser %}
+
+        <a href="/admin" class="w3-bar-item w3-button w3-text-white w3-hover-black" onclick="closeNav()">Admin</a>
+        
+   
+  
+    {%  endif %}
+   
+    
+    <p><span class="w3-large w3-text-black w3-margin-right">
+  </div>
+</nav>
+
+ 
+
+
+<!-- Page Content -->
+
+<div class="w3-padding-large" id="main">
+  
+  <!-- Header/Home -->
+  <header class="w3-container w3-padding-32 w3-center w3-black" id="home">
+    <div class="w3-display-container">
+
+        <span class="w3-hide-small">
+          <span class="w3-jumbo" style="font-family: 'ChristopherHand'">{% return_site_name %} Design
+            <img src="{% static 'images/base/shady_dog_logo.jpg' %}" alt="logo" class="w3-image w3-circle" width="125">
+          </span>
+     
+          <span class="w3-display-bottommiddle w3-medium">
+            <span class="w3-xlarge" style="font-family: 'ChristopherHand'">T</span>he
+            <span class="w3-xlarge" style="font-family: 'ChristopherHand'">C</span>lassic
+            <span class="w3-xlarge" style="font-family: 'ChristopherHand'">P</span>ug -
+            <span class="w3-xlarge" style="font-family: 'ChristopherHand'">P</span>olarised         
+          </span>
+        </span>
+
+        <span class="w3-hide-medium w3-hide-large">
+            <img src="{% static 'images/base/shady_dog_logo.jpg' %}" alt="logo" class="w3-image w3-circle" width="30%">
+            <div style="font-family: 'ChristopherHand';font-size:250%"> 
+                {% return_site_name %} Design
+            </div>
+
+          <span class="w3-tiny">
+            <span class="w3-large" style="font-family: 'ChristopherHand'">T</span>he
+            <span class="w3-large" style="font-family: 'ChristopherHand'">C</span>lassic
+            <span class="w3-large" style="font-family: 'ChristopherHand'">P</span>ug -
+            <span class="w3-large" style="font-family: 'ChristopherHand'">P</span>olarised            
+          </span>
+      </span>
+      
+    </div>
+    <span class="w3-hide-medium w3-hide-large">
+            <p>
+            <a href="{% url 'view_cart' %}">
+               <div class="w3-display-container">
+                    <div class="w3-badge w3-tiny w3-display-middle w3-black cart_item_count">{{ item_count }}</div>
+                    <i class="fa fa-shopping-bag w3-xxlarge"></i>
+               </div>
+             </a>
+            </p>
+</span>
+
+         
+      
+    
+    
+  </header>
+
+{% if messages %}
+   {% for message in messages %}
+      {{ message }}
+   {% endfor %}
+{% endif %}
+
+{% block content %}
+  
+{% endblock content %}
+
+
+  
+  {% block footer %}
+    <!-- Footer -->
+  <footer class="w3-content w3-center w3-padding-64 w3-text-white w3-xlarge">
+
+    {% comment %}  
+    This is the facebook modal
+    <a onclick="document.getElementById('myFBModal').style.display='block'" href="javascript:void(0)" class="w3-text-black" >
+      <i class="fa fa-facebook-square w3-hover-opacity w3-text-orange fa-3x"></i>
+    </a>
+    {% endcomment %}
+     
+    <a href="https://www.facebook.com/shadydogdesign/" class="w3-text-black">
+      <i class="fa fa-facebook-square w3-hover-opacity w3-text-orange fa-3x"></i>
+    </a> 
+
+    <div class="fb-like" 
+      data-href="https://www.facebook.com/shadydogdesign/" 
+      data-width="" 
+      data-layout="box_count" 
+      data-action="like" 
+      data-size="small" 
+      data-share="true">
+    </div>
+    
+    {% comment %} 
+    This is the instgram modal 
+    <a onclick="document.getElementById('myInstaModal').style.display='block'" href="javascript:void(0)"><i class="fa fa-instagram fa-3x w3-hover-opacity w3-text-orange"></i>
+    </a>
+    {% endcomment %}  
+
+    <a href="https://www.instagram.com/shadydogdesign/" class="w3-text-black">
+      <i class="fa fa-instagram fa-3x w3-hover-opacity w3-text-orange"></i>
+    </a> 
+
+    <br><br>
+  
+    <p class="w3-small w3-text-white">
+      <a onclick="contact_msg()" href="javascript:void(0)">Contact Us</a>
+      &nbsp;&nbsp;
+      <a onclick="document.getElementById('myPrivModal').style.display='block'" href="javascript:void(0)">Privacy Policy</a>
+    
+     &nbsp;&nbsp;
+      <a onclick="document.getElementById('myRefundModal').style.display='block'" href="javascript:void(0)">Refund Policy</a>
+    <br>
+                                    
+      {% if user.is_superuser %}
+      <a href="{% url 'logout' %}" class="w3-small w3-hover-text-orange">Log Out</a>
+      &nbsp;&nbsp;
+      <a href="{% url 'password_change' %}" class="w3-small w3-hover-text-orange">Change Password</a>
+      {% else %}
+      <a href="{% url 'login' %}" class="w3-small w3-hover-text-orange">Log In</a>
+      {% endif %}
+    </p>
+
+      {% comment %}
+     <span style="margin-top:5px;" class="w3-hide-small w3-round w3-black">
+                      
+      <img src="{% static 'images/base/stripe_trust.png' %}" border="0" alt="Payments by PayPal" style="width: 15%" class="w3-white w3-round">
+      <img src="{% static 'images/base/paypal_logo_largest.jpg' %}" border="0" alt="Payments by PayPal" style="width: 5.5%" class="w3-round">
+    </span> 
+
+       <span style="margin-top:5px;" class="w3-hide-medium w3-hide-large w3-round">
+                      
+      <img src="{% static 'images/base/stripe_trust.png' %}" border="0" alt="Payments by PayPal" style="width: 48%" class="w3-white w3-round">
+      <img src="{% static 'images/base/paypal_logo.jpg' %}" border="0" alt="Payments by PayPal" style="width: 20%" class="w3-round">
+    </span> 
+      {% endcomment %}
+
+    <p class="w3-medium w3-text-orange">Created by <a href="http://www.databasis.ie"><span style="font-family: 'Maven Pro', sans-serif;">databasis.ie</span></a></p>
+
+  {% comment %}
+      Leave out modal for now - just using links
+      {% include "facebook_embed.html" %}
+      {% include "instagram_embed.html" %}
+  {% endcomment %}
+
+  {% include "privacy_policy.html" %}
+  {% include "refund_policy.html" %}
+
+  <!-- End footer -->
+  </footer>
+
+ 
+
+{% endblock footer %}
+
+<!-- END PAGE CONTENT -->
+</div>
+
+
+<script src="{% static 'js/main.js' %}"></script>
+<script>
+  
+  
+  function show_styles(){
+
+    styleMenu = document.querySelectorAll(".style_menu");
+    shop_home = document.querySelectorAll(".shop_home");
+    cart_menu = document.querySelectorAll(".cart_menu");
+
+    var i;
+      for(i=0; i < styleMenu.length; i++){
+        
+        styleMenu[i].classList.add("w3-border");
+        styleMenu[i].classList.add("w3-border-orange");
+        
+      }
+
+    var i;
+      for(i=0; i < shop_home.length; i++){
+        
+        shop_home[i].classList.remove("w3-border");
+        shop_home[i].classList.remove("w3-border-orange");
+        
+      }
+
+  var i;
+      for(i=0; i < cart_menu.length; i++){
+        
+        cart_menu[i].classList.remove("w3-border");
+        cart_menu[i].classList.remove("w3-border-orange");
+        
+      }
+
+    styleList = document.querySelectorAll(".style_list");
+    var i;
+      for(i=0; i < styleList.length; i++){
+        if (styleList[i].className.indexOf("w3-show") == -1) {
+          styleList[i].className += " w3-show";
+        } else {
+          styleList[i].className = styleList[i].className.replace(" w3-show", "");
+        }
+      }
+
+  }
+
+ 
+
+
+// Open and close sidebar
+function openNav() {
+  document.getElementById("mySidebar").style.width = "60%";
+  document.getElementById("mySidebar").style.display = "block";
+}
+
+function closeNav() {
+  document.getElementById("mySidebar").style.display = "none";
+}
+
+
+
+</script>
+
+{% block footer_js %}
+
+{% endblock footer_js %}
+
+
+
+</body>
+</html>

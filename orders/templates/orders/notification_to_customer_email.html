@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<title>W3.CSS</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+<body>
+
+<header class="w3-container w3-teal">
+  <h1>Your {{ site_name }} Order has been received</h1>
+</header>
+
+<div class="w3-container"> 
+  <h2>You ordered the following:</h2>
+ 
+  <p>
+    <table style="text-align: left;width: 50%;">
+  	{% autoescape off %}{{ product_details }}{% endautoescape %} 
+  </table>
+ </p>
+
+  <hr>
+</div>
+
+<article class="w3-container"> 
+  <h2>Amounts</h2>
+  <p>
+    <table>
+      <tr><td></td><td style="text-align: right;">&euro;</td></tr>
+  	   <tr><td><b>Order Subtotal:</b></td><td style="text-align: right;">{{ sub_total }}</td></tr>
+        <tr><td><b>{{ shipping_type }} Shipping:</b></td><td style="text-align: right;">{{ shipping_cost }}</td></tr>
+  	   <tr><td><b>Order Discount:</b></td><td style="text-align: right;">{{ order_discount_amount }}</td></tr>
+       <tr><td><b>Order Total:</b></td><td style="text-align: right;"><b>{{ total }}</b></td></tr>
+    </table>
+  </p>
+  <hr>
+</article>
+
+<section class="w3-container"> 
+  <h2>Payment Details</h2>
+  <p>
+  	<table>
+      <tr><td><b>Shady Dog Reference:</b></td><td>{{ payment_ref_from_payment_method }}SDD{{ order_id }}</td></tr>
+      <tr><td><b>Payment Method:</b></td><td>{{ payment_method }}</td></tr>
+      <tr><td><b>Billing Email:</b></td><td>{{ billing_email }}</td></tr>
+      <tr><td style="vertical-align: top;"><b>Billing Details:</b></td><td>{{ billing_address }}</td></tr>
+    </table>
+  </p>
+  <hr>
+</section>
+
+<section class="w3-container"> 
+  <h2>Shipping Details</h2>
+  <p>
+    <table style="vertical-align: top;">
+      <tr><td style="vertical-align: top;"><b>Shipping Address:</b></td><td>{{ shipping_address }}</td></tr>
+      {% if customer_notes %}
+          <tr><td><b>Customer Notes:</b></td><td>{{ customer_notes }}</td></tr>
+      {% endif %}
+    </table>
+  </p>
+  <hr>
+</section>
+
+<div class="w3-container w3-teal">
+  <h5>{{ site_name }}</h5>
+</div>
+
+</body>
+</html>
+
+

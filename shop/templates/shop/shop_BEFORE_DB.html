@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block head_js %}
+	<script src="https://js.stripe.com/v3/"></script> 
+	<script src="{% static 'js/main.js' %}"></script> 
+{% endblock head_js %}
+{% block head_style %}
+	<style>
+		.hidden {
+		  visibility: hidden;
+		  opacity: 0;
+		  transition: visibility 0s 0.5s, opacity 0.5s linear;
+		}
+
+		.visible {
+		  visibility: visible;
+		  opacity: 1;
+		  transition: opacity 0.5s linear;
+		}
+
+	</style>
+{% endblock head_style %}
+
+{% block content %}
+	<!-- Styles Section -->
+	  <div class="w3-padding-32 w3-content" id="styles">
+	    <h2 class="w3-text-grey">Styles</h2>
+	    <hr class="w3-opacity">
+
+	    <!-- Grid for photos -->
+	    <div class="w3-row-padding" style="margin:0 -16px">
+	      <div class="w3-half">
+	        
+				<div class="w3-display-container w3-text-black">
+
+					<button id="original_style_label" class="w3-padding w3-display-topright w3-hide-large w3-hide-medium " onclick="showDetails(this, 'original_style', 'aviator_style')"><i class="fa fa-align-justify"></i>
+		            </button>
+
+		            <button id="original_style_label" class="w3-padding w3-display-topright w3-hide-small w3-xlarge" onclick="showDetails(this,'original_style')"><i class="fa fa-align-justify"></i>
+		            </button>
+
+		            
+		            <img src="{% static 'images/shop/shady_original.jpg' %}" style="width:100%" title="The Original Shady Dog">
+         
+			        <div class="w3-dropdown-click" style="width:100%">
+			            <div id="original_style" class="w3-dropdown-content w3-animate-zoom" style="width:100%; margin-bottom:20px;">
+			              <ul class="w3-ul w3-center w3-card w3-hover-shadow">
+			                <li id="original_style_heading" class="w3-dark-grey w3-xlarge w3-padding-32">Original Style</li>
+			                <li class="w3-padding-16">Polarized
+			                  <span class="w3-opacity">Yes</span></li>
+			                <li class="w3-padding-16">Size
+			                  <span class="w3-opacity">3cm x 8cm</span></li>
+			                  <li class="w3-padding-16">Weight
+			                  <span class="w3-opacity">0.2kg</span></li>
+			                  <li class="w3-padding-16">Unisex
+			                  <span class="w3-opacity">Yes</span></li>
+			                  <li class="w3-padding-16">Lense Colour
+			                  <span class="w3-opacity">Grey</span></li>
+			                  <li class="w3-padding-16">Breed
+			                  <span class="w3-opacity">Pug</span></li>
+			                <li class="w3-padding-16">
+			                  <h2>€ 55</h2>
+			                </li>
+			                <li class="w3-light-grey w3-padding-24">
+			                  <button id="price_1I8TtSHVk7sPIxeCJXPo6YvT" class="w3-button w3-white w3-padding-large w3-hover-black" onclick="get_stripe_checkout(this)">Buy</button>
+			                </li>
+			              </ul>
+			            </div>
+			          
+			        </div>
+		      	</div>
+	        
+	      </div>
+
+	      <div class="w3-half">
+	        <div class="w3-display-container w3-text-black">
+
+	        	<button id="aviator_style_label"  class="w3-padding w3-display-topright w3-hide-large w3-hide-medium" onclick="showDetails(this,'aviator_style', 'original_style')"><i class="fa fa-align-justify"></i>
+		        </button>
+		        <button id="aviator_style_label"  class="w3-padding w3-display-topright w3-hide-small w3-xlarge" onclick="showDetails(this,'aviator_style')"><i class="fa fa-align-justify"></i>
+		        </button>
+
+	            <img src="{% static 'images/shop/shady_aviator.jpg' %}" style="width:100%" title="Aviator Shady Dog">
+
+	            <div class="w3-dropdown-click" style="width:100%">
+		            <div id="aviator_style" class="w3-dropdown-content w3-animate-zoom" style="width:100%;margin-bottom:20px;">
+		              <ul class="w3-ul w3-center w3-card w3-hover-shadow">
+		              <li id="aviator_style_heading" class="w3-dark-grey w3-xlarge w3-padding-32">Aviator Style</li>
+		              <li class="w3-padding-16">Polarized
+		                  <span class="w3-opacity">Yes</span></li>
+		                <li class="w3-padding-16">Size
+		                  <span class="w3-opacity">3cm x 8cm</span></li>
+		                  <li class="w3-padding-16">Weight
+		                  <span class="w3-opacity">0.2kg</span></li>
+		                  <li class="w3-padding-16">Unisex
+		                  <span class="w3-opacity">Yes</span></li>
+		                  <li class="w3-padding-16">Lense Colour
+		                  <span class="w3-opacity">Grey</span></li>
+		                  <li class="w3-padding-16">Breed
+		                  <span class="w3-opacity">Pug</span></li>
+		              <li class="w3-padding-16">
+		                <h2>€ 45</h2>
+		              </li>
+		              <li class="w3-light-grey w3-padding-24">
+		                <button id="price_1I8TELHVk7sPIxeCbBIdRh2C" class="w3-button w3-white w3-padding-large w3-hover-black" onclick="get_stripe_checkout(this)">Buy</button>
+		              </li>
+		            </ul>
+		            </div>
+	          </div>
+	      	</div>
+	        
+	      </div>
+	    <!-- End photo grid -->
+	    </div>
+	  <!-- End Styles Section -->
+	  </div>
+
+	
+
+{% endblock content %}
+
+{% block footer_js %}
+<script>
+	function showDetails(el,id,elid_2="") {
+
+	  var x = document.getElementById(id);
+	  var x_heading = document.getElementById(id + "_heading");
+
+	  if (x.className.indexOf("w3-show") == -1) {
+	  	
+	  	x.className += " w3-show";
+	    x.className += " w3-animate-opacity";
+	    el.innerHTML = "<i class='fa fa-times'></i>";
+	    
+  		window.scroll(0,500);
+
+	  } else {
+	    x.className = x.className.replace(" w3-show", "");
+	    x.className = x.className.replace(" w3-animate-opacity", "");
+	    el.innerHTML = "<i class='fa fa-align-justify'></i>";
+	   
+	  }
+
+	  if (elid_2 !=""){
+	    hideDetails(elid_2);
+	  }
+	}
+
+	function hideDetails(id){
+
+		var x = document.getElementById(id);
+		var x_label = document.getElementById(id + "_label");
+		x.className = x.className.replace(" w3-show", "");
+		x_label.innerHTML = "<i class='fa fa-align-justify'></i>"
+
+	}
+
+</script>
+{% endblock footer_js %}

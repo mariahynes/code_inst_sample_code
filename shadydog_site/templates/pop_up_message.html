@@ -1,0 +1,28 @@
+ <div id="pop_up_message" class="w3-modal">
+	    <div class="w3-modal-content" style="width:600px;">
+	      <div class="w3-container w3-text-black"> 
+	      	
+		      	<span onclick="document.getElementById('pop_up_message').style.display='none';" style="margin-right:5px;margin-top:5px" class="w3-display-topright w3-padding w3-btn w3-border w3-black w3-border-white w3-hover-white w3-round w3-small">
+		      		<i class="fa fa-times w3-large" aria-hidden="true"></i>
+		      	</span>
+
+		       <p>
+		       	<br><br>
+		       	{% autoescape off %}
+		       	<span id="message_part_1"></span>
+		       	<span id="message_fancy_part" style="font-family:'ChristopherHand';font-size:24px;"></span>
+		       	<span id="message_part_2"></span>
+		       	{% endautoescape %}
+		       </p>
+
+		       
+		       <div id="message_footer" style="margin-left:0px;margin-bottom:5px">
+			       		
+			       		<span onclick="document.getElementById('pop_up_message').style.display='none';" class="w3-btn w3-border w3-black w3-border-white w3-hover-white w3-round w3-small" style="margin-top:5px">Cancel</span>
+			     
+			   </div>
+
+
+	      </div>
+	    </div>
+	  </div>

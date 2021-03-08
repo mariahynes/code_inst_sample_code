@@ -1,0 +1,95 @@
+ <div id="pop_up_instructions" class="w3-modal">
+	    <div class="w3-modal-content" style="width:400px;">
+	      <div class="w3-container w3-text-black"> 
+	      	
+		      	<span onclick="document.getElementById('pop_up_instructions').style.display='none';" style="margin-right:5px;margin-top:5px" class="w3-display-topright w3-padding w3-btn w3-border w3-black w3-border-white w3-hover-white w3-round w3-small">
+		      		<i class="fa fa-times w3-large" aria-hidden="true"></i>
+		      	</span>
+
+		       <form role="form" method="post" id="delivery_details_form" class="w3-container" >
+		       	{% csrf_token %}
+					<div class="w3-display-container w3-text-black w3-padding-16">
+		
+						<h1 style="font-family: 'ChristopherHand';font-size:36px!important;">Delivery Instructions</h1>
+						<p>
+					  	{{ delivery_details_form.customer_notes }}
+						</p>
+		
+					</div>
+				
+		       <div id="message_footer" style="margin-left:0px;margin-bottom:10px">
+		       		
+		       		<span onclick="format_delivery_details_data();" class="w3-btn w3-border w3-black w3-border-white w3-hover-white w3-round w3-small" style="margin-top:5px">Submit</span>
+		       		<span onclick="document.getElementById('pop_up_instructions').style.display='none';" class="w3-btn w3-border w3-black w3-border-white w3-hover-white w3-round w3-small" style="margin-top:5px">Cancel</span>
+			     
+			   </div>
+
+			   </form>
+	      </div>
+	    </div>
+ }
+</div>
+
+<script>
+
+	inputList = document.querySelectorAll("textarea");
+
+        var i;
+        for(i=0; i < inputList.length; i++){
+        	
+        	inputList[i].classList.add("w3-input");  
+        	inputList[i].classList.add("w3-border"); 
+        	inputList[i].classList.add("w3-padding");
+        	inputList[i].classList.add("w3-hover-orange");
+        	inputList[i].classList.add("w3-round");
+        	inputList[i].classList.add("w3-text-orange");
+        }
+
+       
+
+    function format_delivery_details_data(){
+    	
+    	var form_elements = document.getElementById('delivery_details_form').elements;
+    	var obj = {};
+
+    	for (var i=0; i < form_elements.length; i++){
+
+    		var item = form_elements.item(i);
+    		
+    		obj[item.name] = item.value;
+
+    	}
+    	
+    	updateDeliveryDetails(obj);
+    }
+
+    function update_delivery_details_data(new_form_data, old_form_data){
+
+    	var new_obj = JSON.parse(new_form_data)
+        var old_obj = JSON.parse(old_form_data)
+
+    	var changed = false;
+
+    	for (item in new_obj){
+            
+    		document.getElementById("id_" + item).value =new_obj[item];
+    		document.getElementById("id_" + item + "_ro").innerHTML =new_obj[item];	
+
+            if(changed == false){
+
+                if(new_obj[item] != old_obj[item]){
+                        changed = true;
+                    }
+            } 
+
+    	}   
+
+        if (changed == true){
+            populate_pop_up_message("Your ", "Delivery Instructions ", " have been updated", false);
+        }else{
+            populate_pop_up_message("No updates were made to your ", "Delivery Instructions ", "", false);
+        }  
+        
+    }
+    
+</script>
